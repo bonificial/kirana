@@ -9,7 +9,7 @@ import {
   ImageBackground,
   ToastAndroid,
 } from 'react-native';
-
+import DialogInput from 'react-native-dialog-input';
 import {
   Paper as PaperProvider,
   TextInput,
@@ -27,13 +27,28 @@ import {
 import {Dropdown} from 'react-native-material-dropdown';
 import {connect} from 'react-redux';
 import styles from './styles/styles';
-
+import states_city from './state';
 // create a component
 class SignupScreen extends Component {
   state = {
-    phone: null,
+    pw: '',
+    pw_cnf: '',
+    isDialogVisible: false,
   };
   render() {
+    console.log(states_city);
+    let state_names = states_city;
+    let data = [
+      {
+        value: 'Banana',
+      },
+      {
+        value: 'Mango',
+      },
+      {
+        value: 'Pear',
+      },
+    ];
     return (
       <ImageBackground
         source={require('./images/bluebg.png')}
@@ -51,6 +66,17 @@ class SignupScreen extends Component {
           <View style={styles.formContainer}>
             <View style={styles.inputContainer_nmg}>
               <OutlinedTextField
+                label="Store Name"
+                value={this.props.storename}
+                keyboardType="text"
+                inputContainerStyle={{fontSize: 13}}
+                onChangeText={store => {
+                  this.props.setPhone(store);
+                }}
+              />
+            </View>
+            <View style={styles.inputContainer_nmg}>
+              <OutlinedTextField
                 label="Phone number"
                 value={this.props.phone}
                 keyboardType="phone-pad"
@@ -63,51 +89,69 @@ class SignupScreen extends Component {
             <View style={styles.inputContainer_nmg}>
               <OutlinedTextField
                 label="Create Password"
-                keyboardType="password"
-                value={this.props.phone}
+                containerStyle={{marginTop: 0}}
+                value={this.state.pw}
                 inputContainerStyle={{fontSize: 13}}
                 secureTextEntry
-                
-                
+                onChangeText={pw => {
+                  this.setState({pw});
+                }}
               />
             </View>
             <View style={styles.inputContainer_nmg}>
               <OutlinedTextField
                 label="Confirm Password"
-                keyboardType="password"
+                value={this.state.pw_cnf}
                 inputContainerStyle={{fontSize: 13}}
                 secureTextEntry
-                formatText={this.formatText}
-                onSubmitEditing={this.onSubmit}
-                ref={this.fieldRef}
+                onChangeText={pw_cnf => {
+                  this.setState({pw_cnf});
+                }}
               />
             </View>
           </View>
           <View style={styles.inputContainer_nmg}>
-            <Dropdown label="Select State" />
+            <Dropdown
+              dropdownOffset={{
+                top: 8,
+                left: 0,
+              }}
+              data={data}
+              label="Select State"
+            />
           </View>
           <View style={styles.inputContainer_nmg}>
-            <Dropdown label="Select City" />
+            <Dropdown
+              dropdownOffset={{
+                top: 8,
+                left: 0,
+              }}
+              data={data}
+              label="Select City"
+            />
           </View>
+
           <Divider />
           <View style={styles.buttonContainer}>
             <Button
               style={styles.loginButton}
-              icon="login"
+              icon="account-plus-outline"
               mode="contained"
-              onPress={() => console.log('Pressed')}>
-              Login
+              onPress={() => {
+                this.setState({isDialogVisible: true});
+              }}>
+              Signup
             </Button>
           </View>
-          <View style={styles.inlineTextsContainer}>
-            <Text
-              style={styles.inlineTexts}
-              onPress={() =>
-                ToastAndroid.show('Reset Password Placeholder', 5000)
-              }>
-              Reset Password
-            </Text>
-          </View>
+          <DialogInput
+            isDialogVisible={this.state.isDialogVisible}
+            title={'Verify Phone Number'}
+            message={'An OTP has been sen to the Number +1 234 XXX XXX. Please enter it below to verify the number.'}
+            hintInput={'_ _ _ _ _ _'}
+            submitInput={console.log('Dialog Input Submitted')}
+            closeDialog={() => {
+            this.setState({isDialogVisible: false});
+            }}></DialogInput>
         </View>
       </ImageBackground>
     );
@@ -122,7 +166,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     setPhone: text => dispatch({type: 'SET_PHONE', value: text}),
-    setPassword: () => dispatch({type: 'SET_PASSWORD'}),
+    setPassword: text => dispatch({type: 'SET_PASSWORD', value: text}),
   };
 }
 

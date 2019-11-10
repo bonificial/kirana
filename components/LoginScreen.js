@@ -22,7 +22,7 @@ import {
 import styles from './styles/styles';
 
 // create a component
-export default class LoginScreen extends Component {
+ class LoginScreen extends Component {
   state = {
     text: '',
   };
@@ -68,7 +68,7 @@ export default class LoginScreen extends Component {
               style={styles.loginButton}
               icon="login"
               mode="contained"
-              onPress={() => console.log('Pressed')}>
+              onPress={() => {this.props.navigation.goBack();     }}>
               Login
             </Button>
           </View>
@@ -86,3 +86,4 @@ export default class LoginScreen extends Component {
     );
   }
 }
+export default (LoginScreen);

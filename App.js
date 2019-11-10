@@ -30,12 +30,14 @@ import {createStackNavigator} from 'react-navigation-stack';
 
 import ProfileScreen from './components/ProfileScreen';
 import HomeScreen from './components/HomeScreen';
-import LoginScreen from './components/LoginScreen';
-import SignupScreen from './components/SignupScreen';
+
 const initialState = {
   activeScreen: 'login',
-  phone: 45454,
+  storeName:'',
+  phone: '',
   password: '',
+  state:'',
+  city:''
 };
 const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -43,7 +45,7 @@ const reducer = (state = initialState, action) => {
       console.log('Reducer', action.value);
       return {phone: action.value};
     case 'SET_PASSWORD':
-      return {counter: state.counter - 1};
+      return {password: action.value};
   }
 
   return state;
@@ -60,7 +62,7 @@ class App extends React.Component {
   render() {
     return (
       <Provider store={store}>
-        <SignupScreen />
+        <HomeScreen />
       </Provider>
     );
   }

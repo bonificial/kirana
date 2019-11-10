@@ -9,7 +9,7 @@ export default StyleSheet.create({
     //backgroundColor: '#2c3e50',
   },
   title: {
-    fontSize: 30,
+    fontSize: 20,
     fontFamily: 'Libre Baskerville',
     textAlign: 'center',
     marginTop: 20,
@@ -82,6 +82,6 @@ export default StyleSheet.create({
   },
   inlineTexts: {
     display: 'flex',
-    fontSize: 25,
+    fontSize: 17,
   },
 });
