@@ -30,14 +30,17 @@ import {createStackNavigator} from 'react-navigation-stack';
 
 import ProfileScreen from './components/ProfileScreen';
 import HomeScreen from './components/HomeScreen';
+import SignupScreen from './components/SignupScreen';
+import LoginScreen from './components/LoginScreen';
+import ResetScreen from './components/ResetPassword';
 
 const initialState = {
   activeScreen: 'login',
-  storeName:'',
+  storeName: '',
   phone: '',
   password: '',
-  state:'',
-  city:''
+  state: '',
+  city: '',
 };
 const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -53,19 +56,22 @@ const reducer = (state = initialState, action) => {
 const store = createStore(reducer);
 
 const MainNavigator = createStackNavigator({
-  Home: {screen: HomeScreen},
+  Login: {screen: LoginScreen},
+  Signup: {screen: SignupScreen},
+  Reset: {screen: ResetScreen},
   Profile: {screen: ProfileScreen},
 });
-let Navigation = createAppContainer(MainNavigator);
+const Navigation = createAppContainer(MainNavigator);
 //const App = createAppContainer(MainNavigator);
-class App extends React.Component {
+
+// Render the app container component with the provider around it
+export default class App extends React.Component {
   render() {
     return (
       <Provider store={store}>
-        <HomeScreen />
+        <Navigation />
       </Provider>
     );
   }
 }
 console.disableYellowBox = true;
-export default App;

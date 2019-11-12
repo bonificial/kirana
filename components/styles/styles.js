@@ -1,7 +1,7 @@
-import  { Stylesheet } from 'react-native';
+import {Stylesheet} from 'react-native';
 //import liraries
-import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, {Component} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
 
 export default StyleSheet.create({
   container: {
@@ -29,10 +29,17 @@ export default StyleSheet.create({
     marginBottom: 5,
   },
   inlineTextsContainer: {
+    paddingHorizontal: 20,
+  },
+  verticalDivider: {
+    borderRightWidth: 0.3,
+    borderRightColor: 'black',
+    height: '100%',
+  },
+  spaceEvens: {
     paddingHorizontal: 40,
     marginBottom: 20,
     flexDirection: 'row',
-
     justifyContent: 'space-evenly',
   },
   inputs: {
@@ -83,5 +90,7 @@ export default StyleSheet.create({
   inlineTexts: {
     display: 'flex',
     fontSize: 17,
+    
+   
   },
 });

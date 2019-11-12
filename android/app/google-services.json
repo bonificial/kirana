@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "656200230529",
+    "firebase_url": "https://kirana-49a2f.firebaseio.com",
+    "project_id": "kirana-49a2f",
+    "storage_bucket": "kirana-49a2f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:656200230529:android:8282f9f15df5deda91cf80",
+        "android_client_info": {
+          "package_name": "com.kirana"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "656200230529-7k88iriulpgusa8c6ipr1jj8k85tpc75.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDow7QDknBN-fU4ytxSULtHOZkMwKl8Vzc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "656200230529-7k88iriulpgusa8c6ipr1jj8k85tpc75.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

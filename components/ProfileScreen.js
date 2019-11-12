@@ -55,7 +55,7 @@ class ProfileScreen extends Component {
     ];
     return (
       <ImageBackground
-        source={require('./images/bluebg.png')}
+        source={require('./images/bluebg.jpg')}
         style={{width: '100%', height: '100%'}}>
         <View style={styles.container}>
           <Text style={styles.title}>Edit Profile </Text>
@@ -92,7 +92,7 @@ class ProfileScreen extends Component {
             </View>
             <View style={styles.inputContainer_nmg}>
               <OutlinedTextField
-                label="Create Password"
+                label="Set New Password"
                 containerStyle={{marginTop: 0}}
                 value={this.state.pw}
                 inputContainerStyle={{fontSize: 13}}
@@ -104,7 +104,7 @@ class ProfileScreen extends Component {
             </View>
             <View style={styles.inputContainer_nmg}>
               <OutlinedTextField
-                label="Confirm Password"
+                label="Confirm New Password"
                 value={this.state.pw_cnf}
                 inputContainerStyle={{fontSize: 13}}
                 secureTextEntry
@@ -139,12 +139,12 @@ class ProfileScreen extends Component {
           <View style={styles.buttonContainer}>
             <Button
               style={styles.loginButton}
-              icon="account-plus-outline"
+              icon="pen"
               mode="contained"
               onPress={() => {
                 this.setState({isDialogVisible: true});
               }}>
-              Signup
+              Update Profile
             </Button>
           </View>
           <DialogInput
