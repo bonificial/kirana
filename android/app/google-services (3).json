@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "582614217176",
+    "firebase_url": "https://inven-ai.firebaseio.com",
+    "project_id": "inven-ai",
+    "storage_bucket": "inven-ai.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:582614217176:android:22beeb1e6429f52fe442ad",
+        "android_client_info": {
+          "package_name": "com.kirana.inven_ai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "582614217176-gntiq1esgm14gdsub2oimgq6t8a3dtn8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWIB0DspgDtgrIQP5SChQyCF3Qv5NPQxE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "582614217176-gntiq1esgm14gdsub2oimgq6t8a3dtn8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
