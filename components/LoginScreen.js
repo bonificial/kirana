@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ImageBackground,
   ToastAndroid,
+  Alert,
 } from 'react-native';
 //import firebase from 'react-native-firebase';
 import firebase from 'firebase';
@@ -22,58 +23,45 @@ import {
 } from 'react-native-paper';
 import styles from './styles/styles';
 import {Icon, colors} from 'react-native-elements';
+import {db, CryptoJS} from './config';
 
 // create a component
 class LoginScreen extends Component {
   state = {
-    text: '',
+    phone: '',
+    password: '',
   };
   static navigationOptions = {
     header: null,
   };
   componentWillMount() {
     // Your web app's Firebase configuration
-    var firebaseConfig = {
-      apiKey: 'AIzaSyDc0RE2uRPsKwBKgkC0qQHfwMivOny2DDY',
-      authDomain: 'kirana-49a2f.firebaseapp.com',
-      databaseURL: 'https://kirana-49a2f.firebaseio.com',
-      projectId: 'kirana-49a2f',
-      storageBucket: 'kirana-49a2f.appspot.com',
-      messagingSenderId: '656200230529',
-      appId: '1:656200230529:web:a628974d66b4147291cf80',
-      measurementId: 'G-D2DQZ6H7KG',
-    };
-    // Initialize Firebase
-    try {
-      app = firebase.initializeApp(firebaseConfig);
-      console.log(firebase);
-    } catch (err) {
-      app = firebase.app();
-    }
-
-    app
-      .database()
-      .ref('users/001')
-      .set(
-        {
-          phone: '0700618822',
-          password: '1234',
-        },
-        status => {
-          console.log(status);
-        },
-      );
   }
-  processLogin = () => {
-    firebase
-      .auth()
-      .signInAnonymously()
-      .then(credential => {
-        if (credential) {
-          console.log('default app user ->', credential.user.toJSON());
+
+  loginFlow = user => {
+    const {navigate}= this.props.navigation;
+    console.log('Signing in with details', user.phone, user.password);
+    db.ref('/users')
+      .child(user.phone)
+      .once('value', function(snapshot) {
+        var decrypt = CryptoJS.AES.decrypt(
+          snapshot.val().password,
+          'KIRANA'
+        ).toString(CryptoJS.enc.Utf8);
+  var exists = snapshot.val() !== null;
+          if (!exists) {
+              alert('User not found. Please Sign up.');
+                navigate('Signup');
+          }else{
+        if (user.password !== decrypt) {
+          alert('You Entered an invalid password');
+        } else {
+        navigate('Initial')
         }
+      }
       });
   };
+
   render() {
     const {navigate} = this.props.navigation;
     return (
@@ -96,14 +84,16 @@ class LoginScreen extends Component {
                 type="outlined"
                 style={styles.inputs}
                 label="Phone #"
-                value={this.state.text}
-                onChangeText={text => this.setState({text})}
+                value={this.state.phone}
+                onChangeText={phone => this.setState({phone})}
               />
             </View>
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.inputs}
                 type="outlined"
+                value={this.state.password}
+                onChangeText={password => this.setState({password})}
                 label="Password"
                 secureTextEntry
               />
@@ -116,7 +106,7 @@ class LoginScreen extends Component {
               icon="login"
               mode="contained"
               onPress={() => {
-                this.props.navigation.goBack();
+                this.loginFlow(this.state);
               }}>
               Login
             </Button>

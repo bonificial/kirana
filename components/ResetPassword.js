@@ -120,6 +120,7 @@ class ResetScreen extends Component {
                 <Text style={styles.inlineTexts}> Back to Login</Text>
               </TouchableOpacity>
             </View>
+            <Text style={styles.verticalDivider}></Text>
             <View style={styles.inlineTextsContainer}>
               <TouchableOpacity onPress={() => navigate('Signup')}>
                 <Icon name="person-add" />

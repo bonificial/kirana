@@ -33,11 +33,12 @@ import HomeScreen from './components/HomeScreen';
 import SignupScreen from './components/SignupScreen';
 import LoginScreen from './components/LoginScreen';
 import ResetScreen from './components/ResetPassword';
-
+import initialScreen from './components/initialScreen';
 const initialState = {
   activeScreen: 'login',
   storeName: '',
   phone: '',
+  email: '',
   password: '',
   state: '',
   city: '',
@@ -45,10 +46,26 @@ const initialState = {
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case 'SET_PHONE':
-      console.log('Reducer', action.value);
-      return {phone: action.value};
+      console.log(state);
+      return {...state, phone: action.payload.phone};
     case 'SET_PASSWORD':
-      return {password: action.value};
+      console.log(state);
+      return {...state, password: action.payload.pw};
+    case 'SET_STATE':
+      console.log(state);
+      return {...state, state: action.payload.state};
+    case 'SET_CITY':
+      console.log(state);
+      return {...state, city: action.payload.city};
+    case 'SET_EMAIL':
+      console.log(state);
+      return {...state, email: action.payload.email};
+    case 'SET_STORE':
+      console.log(state);
+      return {...state, storeName: action.payload.storeName};
+    case 'PRINT_STATE':
+      console.log(state);
+      return state;
   }
 
   return state;
@@ -60,6 +77,7 @@ const MainNavigator = createStackNavigator({
   Signup: {screen: SignupScreen},
   Reset: {screen: ResetScreen},
   Profile: {screen: ProfileScreen},
+  Initial: {screen: initialScreen},
 });
 const Navigation = createAppContainer(MainNavigator);
 //const App = createAppContainer(MainNavigator);

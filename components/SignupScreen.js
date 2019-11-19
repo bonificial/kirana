@@ -8,8 +8,10 @@ import {
   TouchableOpacity,
   ImageBackground,
   ToastAndroid,
+  Alert,
 } from 'react-native';
 import DialogInput from 'react-native-dialog-input';
+import {MaterialDialog} from 'react-native-material-dialog';
 import {
   Paper as PaperProvider,
   TextInput,
@@ -28,33 +30,185 @@ import {
 import {Dropdown} from 'react-native-material-dropdown';
 import {connect} from 'react-redux';
 import styles from './styles/styles';
-import states_city from './state';
+import {states} from './state';
+import {db, CryptoJS} from './config';
 
+sendSMS = () => {
+  const accountSid = 'AC100a4e2c90cb89ecc7edbdc1cf694f38';
+  const authToken = '16021989d9f69f5573f20d0c6a15b1ea';
+  const client = require('twilio')(accountSid, authToken);
+
+  client.messages
+    .create({
+      body: 'This is the ship that made the Kessel Run in fourteen parsecs?',
+      from: '+12055510629',
+      to: '+254700618822',
+    })
+    .then(message => console.log(message.sid));
+};
+
+var passwordValidator = require('password-validator');
 // create a component
 class SignupScreen extends Component {
   state = {
     pw: '',
     pw_cnf: '',
+    password: '',
     isDialogVisible: false,
+    DialogAlertVisible: false,
+    ActionOnDismiss: '',
+    DialogAlertMessage: '',
+    DialogAlertTitle: '',
+    storename: '',
+    phone: '',
+    email: '',
+    s_state: '',
+    city: '',
+    states_array: [],
+    cities_array: [],
   };
+
+  componentDidMount() {
+    // console.log( states);
+    var states_only = Object.keys(states);
+    var states_array = [];
+    states_only.map(state => {
+      var obj_state = new Object();
+      obj_state.value = state;
+      states_array.push(obj_state);
+    });
+    this.setState({states_array});
+  }
+  populateCities() {
+    var s_state = this.state.s_state;
+    var cities_in_state_only = states[s_state];
+    var cities = [];
+    cities_in_state_only.map(city => {
+      var city_obj = new Object();
+      city_obj.value = city;
+      cities.push(city_obj);
+    });
+    this.setState({cities_array: cities});
+    console.log(cities);
+  }
+
   static navigationOptions = {
     header: null,
   };
+  validateInputs = () => {
+    if (this.state.storename == '') {
+      alert('Please provide the store name');
+      return false;
+    }
+    if (this.state.phone == '') {
+      alert('Please provide a phone number');
+      return false;
+    }
+
+    if (this.state.s_state == '') {
+      alert('Please provide the State');
+      return false;
+    }
+    if (this.state.city == '') {
+      alert('Please provide the City');
+      return false;
+    }
+    return true;
+  };
+  signupFlow = user => {
+    sendSMS();
+    var cl = this;
+
+    if (!cl.setPassword()) {
+      return false;
+    } else {
+      db.ref('/users')
+        .child(user.phone)
+        .once('value', function(snapshot) {
+          console.log(snapshot);
+          var exists = snapshot.val() !== null;
+          if (exists) {
+            cl.setState({
+              DialogAlertMessage:
+                'Another account exists that is associated with the phone number. Please use the login option.',
+              DialogAlertTitle: 'Kirana',
+              DialogAlertVisible: true,
+              ActionOnDismiss: 'REDIRECT_SIGNIN',
+            });
+          } else {
+            if (!cl.validateInputs()) {
+              return 0;
+            } else {
+              console.log(user);
+              db.ref('/users')
+                .child(user.phone)
+                .set({
+                  city: user.city,
+                  storename: user.storename,
+                  password: user.password,
+                  state: user.s_state,
+                })
+                .then(data => {
+                  //success callback
+
+                  cl.setState({
+                    DialogAlertMessage:
+                      'Registration Successful.You may now proceed to Login',
+                    DialogAlertTitle: 'Kirana',
+                    DialogAlertVisible: true,
+                    ActionOnDismiss: 'REDIRECT_SIGNIN',
+                  });
+                })
+                .catch(error => {
+                  //error callback
+                  cl.setState({
+                    DialogAlertMessage:
+                      'An Error occurred. Kindly try again later or contact admin.',
+                    DialogAlertTitle: 'Kirana',
+                    DialogAlertVisible: true,
+                  });
+                });
+            }
+          }
+        });
+    }
+  };
+
+  proceedActions(actionType) {
+    const {navigate} = this.props.navigation;
+    this.setState({DialogAlertVisible: false});
+    if (this.state.ActionOnDismiss == 'REDIRECT_SIGNIN4') {
+      navigate('Login');
+    }
+  }
+  setPassword = () => {
+    if (this.state.pw.length < 8) {
+      this.setState({
+        DialogAlertMessage:
+          'Please set a password that is at least 8 characters.',
+        DialogAlertTitle: 'Error',
+        DialogAlertVisible: true,
+      });
+      return false;
+    } else if (this.state.pw !== this.state.pw_cnf) {
+      this.setState({
+        DialogAlertMessage: 'Entered Passwords do not Match',
+        DialogAlertTitle: 'Error',
+        DialogAlertVisible: true,
+      });
+
+      return false;
+    }
+
+    var hash = CryptoJS.AES.encrypt(this.state.pw, 'KIRANA').toString();
+    this.setState({password: hash});
+    console.log(hash);
+    return true;
+  };
+
   render() {
     const {navigate} = this.props.navigation;
-    console.log(states_city);
-    let state_names = states_city;
-    let data = [
-      {
-        value: 'Place 1',
-      },
-      {
-        value: 'Place 2',
-      },
-      {
-        value: 'Place 3',
-      },
-    ];
+
     return (
       <ImageBackground
         source={require('./images/bluebg.jpg')}
@@ -68,27 +222,26 @@ class SignupScreen extends Component {
               source={require('./images/k.png')}
             />
           </View>
-
           <View style={styles.formContainer}>
             <View style={styles.inputContainer_nmg}>
               <OutlinedTextField
-                label="Store Name"
-                value={this.props.storename}
-                keyboardType="text"
+                label="Phone number"
+                value={this.state.phone}
+                keyboardType="phone-pad"
                 inputContainerStyle={{fontSize: 13}}
-                onChangeText={store => {
-                  this.props.setPhone(store);
+                onChangeText={phone => {
+                  this.setState({phone});
                 }}
               />
             </View>
             <View style={styles.inputContainer_nmg}>
               <OutlinedTextField
-                label="Phone number"
-                value={this.props.phone}
-                keyboardType="phone-pad"
+                label="Store Name"
+                value={this.state.storename}
+                keyboardType="text"
                 inputContainerStyle={{fontSize: 13}}
-                onChangeText={phone => {
-                  this.props.setPhone(phone);
+                onChangeText={storename => {
+                  this.setState({storename});
                 }}
               />
             </View>
@@ -122,8 +275,13 @@ class SignupScreen extends Component {
                 top: 8,
                 left: 0,
               }}
-              data={data}
+              data={this.state.states_array}
               label="Select State"
+              value={this.state.s_state}
+              onChangeText={s_state => {
+                this.setState({s_state});
+                this.populateCities();
+              }}
             />
           </View>
           <View style={styles.inputContainer_nmg}>
@@ -132,11 +290,17 @@ class SignupScreen extends Component {
                 top: 8,
                 left: 0,
               }}
-              data={data}
+              data={this.state.cities_array}
+              value={this.state.city}
               label="Select City"
+              onFocus={() => {
+                console.log('focused');
+              }}
+              onChangeText={city => {
+                this.setState({city});
+              }}
             />
           </View>
-
           <Divider />
           <View style={styles.buttonContainer}>
             <Button
@@ -144,7 +308,7 @@ class SignupScreen extends Component {
               icon="account-plus-outline"
               mode="contained"
               onPress={() => {
-                this.setState({isDialogVisible: true});
+                this.signupFlow(this.state);
               }}>
               Signup
             </Button>
@@ -156,17 +320,23 @@ class SignupScreen extends Component {
               </TouchableOpacity>
             </View>
           </View>
-          <DialogInput
+          {/*   <DialogInput
             isDialogVisible={this.state.isDialogVisible}
             title={'Verify Phone Number'}
             message={
               'An OTP has been sen to the Number +1 234 XXX XXX. Please enter it below to verify the number.'
             }
             hintInput={'_ _ _ _ _ _'}
-            submitInput={console.log('Dialog Input Submitted')}
             closeDialog={() => {
               this.setState({isDialogVisible: false});
-            }}></DialogInput>
+            }}></DialogInput> */}
+          <MaterialDialog
+            title={this.state.DialogAlertTitle}
+            visible={this.state.DialogAlertVisible}
+            onOk={() => this.proceedActions('OK')}
+            onCancel={() => this.proceedActions('CANCEL')}>
+            <Text>{this.state.DialogAlertMessage}</Text>
+          </MaterialDialog>
         </View>
       </ImageBackground>
     );
@@ -176,16 +346,22 @@ function mapStateToProps(state) {
   return {
     phone: state.phone,
     password: state.password,
+    storeName: '',
+    state: '',
+    city: '',
   };
 }
 function mapDispatchToProps(dispatch) {
   return {
-    setPhone: text => dispatch({type: 'SET_PHONE', value: text}),
-    setPassword: text => dispatch({type: 'SET_PASSWORD', value: text}),
+    setEmail: email => dispatch({type: 'SET_EMAIL', payload: {email: email}}),
+    setPhone: phone => dispatch({type: 'SET_PHONE', payload: {phone: phone}}),
+    setPassword: pw => dispatch({type: 'SET_PASSWORD', payload: {pw: pw}}),
+    setStore: storeName =>
+      dispatch({type: 'SET_STORE', payload: {storeName: storeName}}),
+    setState: state => dispatch({type: 'SET_STATE', payload: {state: state}}),
+    setCity: city => dispatch({type: 'SET_CITY', payload: {city: city}}),
+    printState: () => dispatch({type: 'PRINT_STATE'}),
   };
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(SignupScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(SignupScreen);
