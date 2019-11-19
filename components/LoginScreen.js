@@ -40,7 +40,7 @@ class LoginScreen extends Component {
 
   loginFlow = user => {
     const {navigate} = this.props.navigation;
-    console.log('Signing in with details', user.phone, user.password);
+  
     db.ref('/users')
       .child(user.phone)
       .once('value', function(snapshot) {
