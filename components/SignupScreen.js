@@ -33,22 +33,6 @@ import styles from './styles/styles';
 import {states} from './state';
 import {db, CryptoJS} from './config';
 
-sendSMS = () => {
-  const accountSid = 'AC100a4e2c90cb89ecc7edbdc1cf694f38';
-  const authToken = '16021989d9f69f5573f20d0c6a15b1ea';
-  const client = require('twilio')(accountSid, authToken);
-
-  client.messages
-    .create({
-      body: 'This is the ship that made the Kessel Run in fourteen parsecs?',
-      from: '+12055510629',
-      to: '+254700618822',
-    })
-    .then(message => console.log(message.sid));
-};
-
-var passwordValidator = require('password-validator');
-// create a component
 class SignupScreen extends Component {
   state = {
     pw: '',
@@ -59,11 +43,11 @@ class SignupScreen extends Component {
     ActionOnDismiss: '',
     DialogAlertMessage: '',
     DialogAlertTitle: '',
-    storename: '',
-    phone: '',
+    storename: 'kira',
+    phone: '254',
     email: '',
-    s_state: '',
-    city: '',
+    s_state: 'ar',
+    city: 'ar',
     states_array: [],
     cities_array: [],
   };
@@ -115,13 +99,34 @@ class SignupScreen extends Component {
     }
     return true;
   };
+  setPassword = user => {
+    return result;
+  };
   signupFlow = user => {
-    sendSMS();
     var cl = this;
+    var result;
+    if (this.state.pw.length < 8) {
+      this.setState({
+        DialogAlertMessage:
+          'Please set a password that is at least 8 characters.',
+        DialogAlertTitle: 'Error',
+        DialogAlertVisible: true,
+      });
+      result = false;
+    } else if (this.state.pw !== this.state.pw_cnf) {
+      this.setState({
+        DialogAlertMessage: 'Entered Passwords do not Match',
+        DialogAlertTitle: 'Error',
+        DialogAlertVisible: true,
+      });
 
-    if (!cl.setPassword()) {
-      return false;
+      result = false;
     } else {
+      var hash = CryptoJS.AES.encrypt(this.state.pw, 'KIRANA').toString();
+      cl.setState({password: hash});
+      
+
+     //  alert('Password Op ' + hash);
       db.ref('/users')
         .child(user.phone)
         .once('value', function(snapshot) {
@@ -140,12 +145,13 @@ class SignupScreen extends Component {
               return 0;
             } else {
               console.log(user);
+
               db.ref('/users')
                 .child(user.phone)
                 .set({
                   city: user.city,
                   storename: user.storename,
-                  password: user.password,
+                  password: hash,
                   state: user.s_state,
                 })
                 .then(data => {
@@ -177,34 +183,10 @@ class SignupScreen extends Component {
   proceedActions(actionType) {
     const {navigate} = this.props.navigation;
     this.setState({DialogAlertVisible: false});
-    if (this.state.ActionOnDismiss == 'REDIRECT_SIGNIN4') {
+    if (this.state.ActionOnDismiss == 'REDIRECT_SIGNIN') {
       navigate('Login');
     }
   }
-  setPassword = () => {
-    if (this.state.pw.length < 8) {
-      this.setState({
-        DialogAlertMessage:
-          'Please set a password that is at least 8 characters.',
-        DialogAlertTitle: 'Error',
-        DialogAlertVisible: true,
-      });
-      return false;
-    } else if (this.state.pw !== this.state.pw_cnf) {
-      this.setState({
-        DialogAlertMessage: 'Entered Passwords do not Match',
-        DialogAlertTitle: 'Error',
-        DialogAlertVisible: true,
-      });
-
-      return false;
-    }
-
-    var hash = CryptoJS.AES.encrypt(this.state.pw, 'KIRANA').toString();
-    this.setState({password: hash});
-    console.log(hash);
-    return true;
-  };
 
   render() {
     const {navigate} = this.props.navigation;

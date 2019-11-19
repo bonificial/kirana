@@ -39,26 +39,25 @@ class LoginScreen extends Component {
   }
 
   loginFlow = user => {
-    const {navigate}= this.props.navigation;
+    const {navigate} = this.props.navigation;
     console.log('Signing in with details', user.phone, user.password);
     db.ref('/users')
       .child(user.phone)
       .once('value', function(snapshot) {
-        var decrypt = CryptoJS.AES.decrypt(
-          snapshot.val().password,
-          'KIRANA'
-        ).toString(CryptoJS.enc.Utf8);
-  var exists = snapshot.val() !== null;
-          if (!exists) {
-              alert('User not found. Please Sign up.');
-                navigate('Signup');
-          }else{
-        if (user.password !== decrypt) {
-          alert('You Entered an invalid password');
+        if (snapshot.val() == null || snapshot.val() == 'undefined') {
+          alert('User not found. Please Sign up.');
+          navigate('Signup');
         } else {
-        navigate('Initial')
+          var decrypt = CryptoJS.AES.decrypt(
+            snapshot.val().password,
+            'KIRANA',
+          ).toString(CryptoJS.enc.Utf8);
+          if (user.password !== decrypt) {
+            alert('You Entered an invalid password');
+          } else {
+            navigate('Initial');
+          }
         }
-      }
       });
   };
 
