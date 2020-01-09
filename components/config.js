@@ -1,4 +1,5 @@
 import firebase from 'firebase';
+ 
  app = null;
     var firebaseConfig = {
       apiKey: 'AIzaSyDc0RE2uRPsKwBKgkC0qQHfwMivOny2DDY',
@@ -18,7 +19,7 @@ import firebase from 'firebase';
       app = firebase.app();
     }
     export const db = app.database();
-
+ 
   export  const strengthLevels = [
       {
         label: 'Weak',
@@ -58,4 +59,5 @@ import firebase from 'firebase';
       label: 'Too short',
       labelColor: 'red',
     };
+    export const currencySymbol = '$ ';
 export var CryptoJS = require('crypto-js');

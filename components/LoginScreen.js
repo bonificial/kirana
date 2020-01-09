@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import NetInfo from '@react-native-community/netinfo';
 import {
   View,
   Text,
@@ -9,6 +10,7 @@ import {
   ImageBackground,
   ToastAndroid,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 //import firebase from 'react-native-firebase';
 import firebase from 'firebase';
@@ -24,12 +26,17 @@ import {
 import styles from './styles/styles';
 import {Icon, colors} from 'react-native-elements';
 import {db, CryptoJS} from './config';
+import {Toast} from 'native-base';
 
 // create a component
 class LoginScreen extends Component {
   state = {
-    phone: '',
-    password: '',
+    phone: '+254700618822',
+    password: 'bmm130sam',
+    animating: false,
+
+    connected: false,
+    aiText: 'Please Wait',
   };
   static navigationOptions = {
     header: null,
@@ -37,32 +44,65 @@ class LoginScreen extends Component {
   componentWillMount() {
     // Your web app's Firebase configuration
   }
-
-  loginFlow = user => {
+  isNetConnected() {
+    var thiz = this;
+    NetInfo.fetch().then(state => {
+      if (!state.isConnected) {
+        thiz.setState({connected: false});
+        ToastAndroid.show(
+          'Please Check your Internet Connection',
+          ToastAndroid.LONG,
+        );
+      } else {
+        thiz.setState({connected: true});
+        //ToastAndroid.show('Connection Successful', ToastAndroid.SHORT);
+      }
+    });
+    return this.state.connected;
+  }
+  componentDidMount() {
+    this.isNetConnected();
+  }
+  async loginFlow(user) {
+    this.setState({animating: true});
+    console.log('Connected', this.state.connected, this.isNetConnected());
     const {navigate} = this.props.navigation;
-  
-    db.ref('/users')
-      .child(user.phone)
-      .once('value', function(snapshot) {
-        if (snapshot.val() == null || snapshot.val() == 'undefined') {
-          alert('User not found. Please Sign up.');
-          navigate('Signup');
-        } else {
-          var decrypt = CryptoJS.AES.decrypt(
-            snapshot.val().password,
-            'KIRANA',
-          ).toString(CryptoJS.enc.Utf8);
-          if (user.password !== decrypt) {
-            alert('You Entered an invalid password');
-          } else {
-            navigate('Initial');
-          }
-        }
-      });
-  };
+    var thiz = this;
+    this.isNetConnected();
 
+    if (!this.state.connected || !this.isNetConnected()) {
+      this.setState({animating: false});
+      return false;
+    } else {
+      try {
+        db.ref('/users')
+          .child(user.phone)
+          .once('value', function(snapshot) {
+            thiz.setState({animating: false});
+            if (snapshot.val() == null || snapshot.val() == 'undefined') {
+              alert('User not found. Please Sign up.');
+              navigate('Signup');
+            } else {
+              var decrypt = CryptoJS.AES.decrypt(
+                snapshot.val().password,
+                'KIRANA',
+              ).toString(CryptoJS.enc.Utf8);
+              if (user.password !== decrypt) {
+                alert('You Entered an invalid password');
+              } else {
+              navigate('Initial', {storename: snapshot.val().storename});
+              }
+            }
+          });
+      } catch (e) {
+        console.log(e);
+        this.setState({animating: false});
+      }
+    }
+  }
   render() {
     const {navigate} = this.props.navigation;
+    var display = this.state.animating ? 'flex' : 'none';
     return (
       <ImageBackground
         source={require('./images/bluebg.jpg')}
@@ -124,6 +164,20 @@ class LoginScreen extends Component {
                 <Text style={styles.inlineTexts}> Signup Today</Text>
               </TouchableOpacity>
             </View>
+          </View>
+          <View
+            style={{
+              display: display,
+              alignSelf: 'center',
+              alignItems: 'center',
+              width: '70%',
+            }}>
+            <Text style={styles.aiText}>{this.state.aiText}</Text>
+            <ActivityIndicator
+              animating={this.state.animating}
+              size="large"
+              color="#3440a8"
+            />
           </View>
         </View>
       </ImageBackground>

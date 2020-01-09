@@ -34,6 +34,9 @@ import SignupScreen from './components/SignupScreen';
 import LoginScreen from './components/LoginScreen';
 import ResetScreen from './components/ResetPassword';
 import initialScreen from './components/initialScreen';
+import AddNewItemScreen from './components/AddItemScreen';
+import checkOutScreen from './components/checkOut';
+
 const initialState = {
   activeScreen: 'login',
   storeName: '',
@@ -74,10 +77,14 @@ const store = createStore(reducer);
 
 const MainNavigator = createStackNavigator({
   Login: {screen: LoginScreen},
+  Initial: {screen: initialScreen},
+  AddItem: {screen: AddNewItemScreen},
+
   Signup: {screen: SignupScreen},
   Reset: {screen: ResetScreen},
   Profile: {screen: ProfileScreen},
-  Initial: {screen: initialScreen},
+  Checkout: {screen: checkOutScreen},
+  // Initial: {screen: initialScreen},
 });
 const Navigation = createAppContainer(MainNavigator);
 //const App = createAppContainer(MainNavigator);
