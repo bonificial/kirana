@@ -59,5 +59,5 @@ import firebase from 'firebase';
       label: 'Too short',
       labelColor: 'red',
     };
-    export const currencySymbol = '$ ';
+    export const currencySymbol = 'Rs. ';
 export var CryptoJS = require('crypto-js');

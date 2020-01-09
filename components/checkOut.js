@@ -171,7 +171,7 @@ class checkOutScreen extends Component {
 completeDialog = () => {
   SweetAlert.showAlertWithOptions({
   title: 'ORDER COMPLETE',
-  subTitle:  this.state.totalCartValue + ' has been paid for the order. CART RESET.',
+  subTitle:  this.state.totalCartValue + ' has been paid for the order.',
   confirmButtonTitle: 'OK',
   confirmButtonColor: '#000',
   otherButtonTitle: 'Cancel',
@@ -558,7 +558,7 @@ this.resetState();
                           Rs. {item.unitPrice} x {item.count}
                         </DataTable.Cell>
                         <DataTable.Cell numeric>
-                          {item.totalItemPrice}
+                         Rs. {item.totalItemPrice}
                         </DataTable.Cell>
                       </DataTable.Row>
                     ))}
