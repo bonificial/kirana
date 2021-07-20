@@ -18,7 +18,7 @@
     "native-base": "2.13.8",
     "password-validator": "^5.0.3",
     "react": "16.9.0",
-    "react-native": "0.61.4",
+    "react-native": "0.62.3",
     "react-native-camera": "^3.13.1",
     "react-native-dialog-input": "^1.0.7",
     "react-native-elements": "^1.2.7",
